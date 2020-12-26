@@ -103,8 +103,13 @@ def saveDatArchive(metod = 'create'):
             name = input('Dígite el nuevo nombre del contacto: \r\n')
             #obtiene el nombre del archivo con su extension y su ruta
             nameArchiveNew = getNameArchive(name)
+        phoneContact = ''
+        while(not phoneContact.isdigit()):
+            if phoneContact == '':
+                phoneContact = input(f'Dígite {messagePhone} del contacto: \r\n')
+            else:
+                phoneContact = input(f'Dígite {messagePhone} del contacto correctamente\n(No se pemite letras): \r\n')
 
-        phoneContact = input(f'Dígite {messagePhone} del contacto: \r\n')
         category = input(f'Dígite {messageCategory} del contacto: \r\n')
 
         contact = Contact(name, phoneContact, category)
