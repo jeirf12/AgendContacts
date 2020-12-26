@@ -1,23 +1,46 @@
-#libreria para el manejo de archivos
+#Libreria para el manejo de archivos
 import os
 
-#constante para la creacion de una carpeta
+#Constante para la creacion de una carpeta
 FOLDER = 'contacts/'
 
 #Constante para la extension de los archivos
 EXTENSION = '.txt'
 
+#Clase contacto que sirve como api y darle formato a los datos
 class Contact:
     
+    #Constructor parametrizado
     def __init__(self, name, phone,category):
-        self.name = name
-        self.phone = phone
-        self.category = category 
+        self.__name = name
+        self.__phone = phone
+        self.__category = category 
+    
+    #Getter and Setter de cada atributo
+    def setName(self, name):
+        self.__name = name
 
+    def setPhone(self, phone):
+        self.__phone = phone
+
+    def setCategory(self, category):
+        self.__category = category
+
+    def getName(self):
+        return self.__name
+
+    def getPhone(self):
+        return self.__phone
+
+    def getCategory(self):
+        return self.__category
+
+#Main principal - implementacion
 def app():
     
     #Revisa si la carpeta existe o no
     createDirectory()
+    
     option = 0
     while option !=6:
         
@@ -27,117 +50,134 @@ def app():
         #Pregunta al usuario la accion a realizar
         option = questionUsers()    
 
+#Implementacion donde se decide la accion a realizar
 def questionUsers():
     option = input('Selecione una opcion: \r\n')
-    option = int(option)
-    #Ejecutar las opciones
-    if option == 1:
-        createContact()
-    elif option == 2:
-        editContact()
-    elif option == 3:
-        showContacts()
-    elif option == 4:
-        seekContact()
-    elif option == 5:
-        deleteContact()
-    elif option == 6:
-        print('Gracias por utilizar el programa!')
+    if option.isdigit():
+        option = int(option)
+        #Ejecutar las opciones
+        if option == 1:
+            createContact()
+        elif option == 2:
+            editContact()
+        elif option == 3:
+            showContacts()
+        elif option == 4:
+            seekContact()
+        elif option == 5:
+            deleteContact()
+        elif option == 6:
+            print('Gracias por utilizar el programa!')
+        else:
+            print('\r\n Opción no válida, intente de nuevo\r\n')
     else:
-        print('Opción no válida, intente de nuevo')
+        print('\r\n Por favor dígite numeros\r\n')
+        option = 0
+
     return option
 
-def existContact(name):
-    return os.path.isfile(name)
-
-def getNameArchive(name):
-    return FOLDER + name + EXTENSION
-
-def getArchive(nameArchive, form = 'r'):
-    return open(nameArchive, form)
-
-def createContact():
-    print('Escribe los datos para agregar el nuevo contacto') 
+#Guarda los datos dependiendo del metodo, sea crear o editar 
+def saveDatArchive(metod = 'create'):
+    if metod == 'create':
+        messageMetod = 'Dígite el nombre del contacto: \r\n'
+        messagePhone = 'el telefono'
+        messageCategory = 'la categoria'
+    elif metod == 'edit':
+        messageMetod = 'Nombre del contacto que desea editar: \r\n'
+        messagePhone = 'el nuevo telefono'
+        messageCategory = 'la nueva categoria'
+    else:
+        print('No existe el metodo, por favor revise la ruta')
+        return 0
     
-    name = input('Dígite el nombre del contacto: \r\n')
+    name = input(messageMetod)
 
     #obtiene el nombre del archivo con su extension y su ruta
     nameArchive = getNameArchive(name)
     
+    
     #valida si existe un contacto
-    existe = existContact(nameArchive)
-    if not existe:
-        phoneContact = input('Dígite el numero del telefono: \r\n')
-        category = input('Dígite la categoria del contacto: \r\n')
+    exist = existContact(nameArchive)
+    if (not exist and metod == 'create') or (exist and metod == 'edit'):
+        if metod == 'edit': 
+            name = input('Dígite el nuevo nombre del contacto: \r\n')
+            #obtiene el nombre del archivo con su extension y su ruta
+            nameArchiveNew = getNameArchive(name)
+
+        phoneContact = input(f'Dígite {messagePhone} del contacto: \r\n')
+        category = input(f'Dígite {messageCategory} del contacto: \r\n')
+
+        contact = Contact(name, phoneContact, category)
 
         #obtiene el archivo con el nombre de la carpeta y el archivo con su extension 
         archive = getArchive(nameArchive,'w')
         
         #Crea un contacto
         contact = Contact(name, phoneContact, category)
-
-        archive.write('Nombre: '+contact.name+'\r\n')
-        archive.write('Telefono: '+contact.phone+'\r\n')
-        archive.write('Categoria: '+contact.category+'\r\n')
         
+        #Escribe en el archivo
+        archive.write('Nombre: '+contact.getName()+'\r\n')
+        archive.write('Telefono: '+contact.getPhone()+'\r\n')
+        archive.write('Categoria: '+contact.getCategory()+'\r\n')
+        
+        #Cierra el archivo
         archive.close()
+        
+        if metod == 'create':
+            print('\r\n Contacto creado correctamente\r\n ')
+        elif metod == 'edit':
+            #renombra el nuevo archivo con el anterior
+            os.rename(nameArchive, nameArchiveNew)
+            
+            print('\r\n Contacto editado correctamente!\r\n')
 
-        print('\r\n Contacto creado correctamente\r\n ')
-    else:
-        print('Ese contacto ya existe')
+    elif (exist and metod == 'create'):
+        print('\r\n El contacto ya existe para crearlo\r\n')
+    elif (not exist and metod == 'edit'):
+        print('\r\n El contacto para editar no existe \r\n')
 
+#Metodo que valida si el contacto existe en los archivos
+def existContact(name):
+    return os.path.isfile(name)
+
+#Metodo que arma el archivo con su respectiva ruta y extension (en este caso txt)
+def getNameArchive(name):
+    return FOLDER + name + EXTENSION
+
+#Metodo que obtiene un objeto de tipo archivo abierto para su escritura 
+#o por defecto (lectura) si no manda parametro de acción
+def getArchive(nameArchive, action = 'r'):
+    return open(nameArchive, action)
+
+#Crea un contacto en la carpeta con su respectiva información
+def createContact():
+    print('Escribe los datos para agregar el nuevo contacto') 
+    saveDatArchive()
+
+#Edita un contacto creado dentro de la carpeta
 def editContact():
-    print('Escribe el nombre del contacto a editar')
-    namePrevious = input('Nombre del contacto que desea editar: \r\n')
+    print('Escribe los datos del contacto a editar')
+    saveDatArchive('edit')
 
-    #obtiene el nombre del archivo con su extension y su ruta
-    nameArchivePrevious = getNameArchive(namePrevious)
-    
-    #valida si existe un contacto
-    exist = existContact(nameArchivePrevious)
-    if exist:
-        nameNew = input('Dígite el nuevo nombre del contacto: \r\n')
-        phoneNew = input('Dígite el nuevo telefono del contacto: \r\n')
-        categoryNew = input('Dígite la nueva categoria del contacto: \r\n')
-        
-        #crea un contacto
-        contact = Contact(nameNew, phoneNew, categoryNew)
-        
-        #Obtiene un archivo
-        archive = getArchive(nameArchivePrevious, 'w')
-
-        archive.write('Nombre: '+contact.name+'\r\n')
-        archive.write('Telefono: '+contact.phone+'\r\n')
-        archive.write('Categoria: '+contact.category+'\r\n')
-        
-        archive.close()
-
-        #crea un nueva ruta con el nombre nuevo del contacto
-        nameArchiveNew = getNameArchive(nameNew)
-        
-        #renombra el nuevo archivo con el anterior
-        os.rename(nameArchivePrevious, nameArchiveNew)
-
-        print('\r\n Contacto editado correctamente!\r\n')
-
-    else:
-        print('el contacto no existe')
-
+#Muestra todos los contactos que hay en la carpeta, y abre solo archivos con extension .txt 
 def showContacts():
     #Obtiene los archivos dentro de un directorio
     archiveList = os.listdir(FOLDER)
 
     #Valida que la extension del archivo sea .txt
     archiveTxt = [i for i in archiveList if i.endswith(EXTENSION)]
-
-    for archive in archiveTxt:
-        contact = getArchive(FOLDER + archive)
-        for line in contact:
-            #imprime los contenidos
-            print(line.rstrip())
-        #Imprime un separador de contactos
-        print('\r\n')
-
+    size = len(archiveTxt)
+    if size > 0:
+        for archive in archiveTxt:
+            contact = getArchive(FOLDER + archive)
+            for line in contact:
+                #imprime los contenidos
+                print(line.rstrip())
+            #Imprime un separador de contactos
+            print('\r\n')
+    else:
+        print('\r\n No hay contactos para mostrar\r\n')
+#Busca un contacto por su nombre
 def seekContact():
     nameSearch = input('Dígite el nombre del contacto a buscar:\r\n')
 
@@ -152,8 +192,9 @@ def seekContact():
             print(line.rstrip())
         print('\r\n')
     else:
-        print('El contacto no se encuentra en la base de datos')
+        print('\r\n El contacto no se encuentra en la base de datos\r\n')
 
+#Elimina un contacto por su nombre
 def deleteContact():
     nameDelete = input('Dígite el nombre del contacto a eliminar:\r\n')
     
@@ -163,10 +204,11 @@ def deleteContact():
     
     if exist:
         os.remove(nameArchive)
-        print('Contacto eliminado correctamente!')
+        print('\r\n Contacto eliminado correctamente!\r\n')
     else:
-        print('El contacto a eliminar no existe')
+        print('\r\n El contacto a eliminar no existe\r\n')
 
+#Muestra el menu para mostrar al usuario por consola
 def showMenu():
     print('Seleccione del Menu lo que desea hacer:')
     print('1) Agregar Nuevo Contacto')
@@ -176,7 +218,9 @@ def showMenu():
     print('5) Eliminar Contacto')
     print('6) Salir')
 
+#Crea un directorio o carpeta para guardar los contactos(si ya existe, no la crea)
 def createDirectory():
+    #Valida si la carpeta ya ha sido creada
     if not os.path.exists(FOLDER):
         #crear la carpeta
         os.makedirs(FOLDER)
