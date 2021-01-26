@@ -1,3 +1,8 @@
+#Importa la clase os
+import os
+
+from getch import getch, pause
+
 #Importa toda la clase donde esta el crud de contactos
 from HeadCrud import *
 
@@ -9,12 +14,17 @@ def run():
     
     option = 0
     while option !=6:
-        
+        #limpia la pantalla del menu
+        clearScreen()
+
         #Muestra el menu de opciones
         showMenu()
 
         #Pregunta al usuario la accion a realizar
         option = questionUsers() 
+        
+        #Lee una tecla
+        readkey()
 
 #Muestra el menu para mostrar al usuario por consola
 def showMenu():
@@ -52,3 +62,16 @@ def questionUsers():
 
     return option
 
+#Implementación del borrado de pantalla
+def clearScreen():
+    if os.name == "posix":
+        os.system("clear")
+    elif os.name == "ce" or os.name == "nt" or os.name == "dos":
+        os.system("cls")
+
+#Implementación de leer tecla
+def readkey():
+    if os.name == "posix":
+        pause()
+    elif os.name == "ce" or os.name == "nt" or os.name == "dos":
+        os.system("pause")
