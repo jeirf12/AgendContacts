@@ -1,8 +1,8 @@
 #Importa del modulo contacto todos los metodos
-from Contact import *
+from contact import *
 
 #Importa del modulo archivo todos los metodos
-from Archive import *
+from archive import *
 
 #Guarda los datos dependiendo del metodo, sea crear o editar 
 def saveDatArchive(metod = 'create'):
@@ -17,16 +17,16 @@ def saveDatArchive(metod = 'create'):
     else:
         print('No existe el metodo, por favor revise la ruta')
         return 0
-    
+
     name = input(messageMetod)
-   
+
     #crea el contacto con directorio preestablecido
     nameArchive = getNameArchive(name)
 
     #valida si existe un contacto
     exist = existArchive(nameArchive)
     if (not exist and metod == 'create') or (exist and metod == 'edit'):
-        if metod == 'edit': 
+        if metod == 'edit':
             name = input('Dígite el nuevo nombre del contacto: \r\n')
             #crea el nuevo nombre del contacto con directorio preestablecido
             nameArchiveNew = getNameArchive(name)
@@ -43,18 +43,18 @@ def saveDatArchive(metod = 'create'):
 
         #obtiene el archivo con el nombre de la carpeta y el archivo con su extension 
         archive = getArchive(nameArchive,'w')
-        
+
         #Crea un contacto
         contact = Contact(name, phoneContact, category)
-        
+
         #Escribe en el archivo
         archive.write('Nombre: '+contact.getName()+'\r\n')
         archive.write('Telefono: '+contact.getPhone()+'\r\n')
         archive.write('Categoria: '+contact.getCategory()+'\r\n')
-        
+
         #Cierra el archivo
         archive.close()
-        
+
         if metod == 'create':
             print('\r\n Contacto creado correctamente\r\n ')
         elif metod == 'edit':
@@ -69,7 +69,7 @@ def saveDatArchive(metod = 'create'):
 
 #Crea un contacto en la carpeta con su respectiva información
 def createContact():
-    print('Escribe los datos para agregar el nuevo contacto') 
+    print('Escribe los datos para agregar el nuevo contacto')
     saveDatArchive()
 
 #Edita un contacto creado dentro de la carpeta
@@ -79,7 +79,7 @@ def editContact():
 
 #Muestra todos los contactos que hay en la carpeta, y abre solo archivos con extension .txt 
 def showContacts():
-   showDirectorys() 
+   showDirectorys()
 #Busca un contacto por su nombre
 def seekContact():
     nameSearch = input('Dígite el nombre del contacto a buscar:\r\n')
@@ -106,7 +106,7 @@ def deleteContact():
     nameArchive = getNameArchive(nameDelete)
 
     exist = existArchive(nameArchive)
-    
+
     if exist:
         deleteArchive(nameArchive)
         print('\r\n Contacto eliminado correctamente!\r\n')

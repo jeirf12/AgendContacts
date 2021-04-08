@@ -1,12 +1,12 @@
 #Clase contacto que sirve como api y darle formato a los datos
 class Contact:
-    
+
     #Constructor parametrizado
     def __init__(self, name, phone,category):
         self.__name = name
         self.__phone = phone
-        self.__category = category 
-    
+        self.__category = category
+
     #Getter and Setter de cada atributo
     def setName(self, name):
         self.__name = name

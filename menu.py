@@ -4,14 +4,14 @@ import os
 from getch import getch, pause
 
 #Importa toda la clase donde esta el crud de contactos
-from HeadCrud import *
+from headCrud import *
 
 #Menu implementado 
 def run():
-    
+
     #Revisa si la carpeta existe o no (si no existe la crea)
     create()
-    
+
     option = 0
     while option !=6:
         #limpia la pantalla del menu
@@ -21,8 +21,8 @@ def run():
         showMenu()
 
         #Pregunta al usuario la accion a realizar
-        option = questionUsers() 
-        
+        option = questionUsers()
+
         #Lee una tecla
         readkey()
 
