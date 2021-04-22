@@ -31,9 +31,11 @@ def saveDatArchive(metod = 'create'):
             #crea el nuevo nombre del contacto con directorio preestablecido
             nameArchiveNew = getNameArchive(name)
         phoneContact = ''
-        while(not phoneContact.isdigit()):
+        while(not phoneContact.isdigit() or len(phoneContact)<10):
             if phoneContact == '':
                 phoneContact = input(f'Dígite {messagePhone} del contacto: \r\n')
+            elif(len(phoneContact)<10):
+                phoneContact = input(f'Dígite {messagePhone} del contacto correctamente (No se permite menos de 10 digitos): \r\n')
             else:
                 phoneContact = input(f'Dígite {messagePhone} del contacto correctamente\n(No se pemite letras): \r\n')
 
