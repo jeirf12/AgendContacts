@@ -1,16 +1,16 @@
 # Contact Book 🚀
 
-_Simple project for practicing knowledge in python_
+Simple project for practicing knowledge in python
 
 ## Requeriments 🔧
 
-_Install with [pip](https://pypi.org/project/pip/):_
+Install with [pip](https://pypi.org/project/pip/):
 ```
 $ pip install py-getch 
 ```
 ## Ejecution ⚙️
 
-_To run the program:_
+To run the program:
 ```
 $ python main.py
 ```
