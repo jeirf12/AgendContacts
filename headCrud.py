@@ -5,31 +5,34 @@ from contact import *
 from archive import *
 
 #Guarda los datos dependiendo del metodo, sea crear o editar 
-def saveDatArchive(metod = 'create'):
-    if metod == 'create':
-        messageMetod = 'Dígite el nombre del contacto: \r\n'
+def saveDatArchive(method = 'create'):
+    if method == 'create':
+        messageMethod = 'Dígite el nombre del contacto nuevo: \r\n'
+        messageTag = 'la etiqueta'
         messagePhone = 'el telefono'
         messageCategory = 'la categoria'
-    elif metod == 'edit':
-        messageMetod = 'Nombre del contacto que desea editar: \r\n'
+    elif method == 'edit':
+        messageMethod = 'Dígite el nombre o el número del contacto que desea editar: \r\n'
+        messageTag = 'la nueva etiqueta'
         messagePhone = 'el nuevo telefono'
         messageCategory = 'la nueva categoria'
     else:
         print('No existe el metodo, por favor revise la ruta')
         return 0
 
-    name = input(messageMetod)
+    name = input(messageMethod)
 
     #crea el contacto con directorio preestablecido
-    nameArchive = getNameArchive(name)
+    nameArchive = validateContent(name)
 
     #valida si existe un contacto
     exist = existArchive(nameArchive)
-    if (not exist and metod == 'create') or (exist and metod == 'edit'):
-        if metod == 'edit':
+    if (not exist and method == 'create') or (exist and method == 'edit'):
+        if method == 'edit':
             name = input('Dígite el nuevo nombre del contacto: \r\n')
             #crea el nuevo nombre del contacto con directorio preestablecido
             nameArchiveNew = getNameArchive(name)
+        tag = input(f'Dígite {messageTag} del contacto: \r\n')
         phoneContact = ''
         while(not phoneContact.isdigit() or len(phoneContact)<10):
             if phoneContact == '':
@@ -41,32 +44,31 @@ def saveDatArchive(metod = 'create'):
 
         category = input(f'Dígite {messageCategory} del contacto: \r\n')
 
-        contact = Contact(name, phoneContact, category)
-
         #obtiene el archivo con el nombre de la carpeta y el archivo con su extension 
         archive = getArchive(nameArchive,'w')
 
         #Crea un contacto
-        contact = Contact(name, phoneContact, category)
+        contact = Contact(name, tag, phoneContact, category)
 
         #Escribe en el archivo
         archive.write('Nombre: '+contact.getName()+'\r\n')
+        archive.write('Etiqueta: '+contact.getTag()+'\r\n')
         archive.write('Telefono: '+contact.getPhone()+'\r\n')
         archive.write('Categoria: '+contact.getCategory()+'\r\n')
 
         #Cierra el archivo
         archive.close()
 
-        if metod == 'create':
+        if method == 'create':
             print('\r\n Contacto creado correctamente\r\n ')
-        elif metod == 'edit':
+        elif method == 'edit':
             #renombra el nuevo archivo con el anterior (si cambia el nombre del contacto)
             renameArchive(nameArchive, nameArchiveNew)
             print('\r\n Contacto editado correctamente!\r\n')
 
-    elif (exist and metod == 'create'):
+    elif (exist and method == 'create'):
         print('\r\n El contacto ya existe para crearlo\r\n')
-    elif (not exist and metod == 'edit'):
+    elif (not exist and method == 'edit'):
         print('\r\n El contacto para editar no existe \r\n')
 
 #Crea un contacto en la carpeta con su respectiva información
@@ -84,10 +86,10 @@ def showContacts():
    showDirectorys()
 #Busca un contacto por su nombre
 def seekContact():
-    nameSearch = input('Dígite el nombre del contacto a buscar:\r\n')
+    nameSearch = input('Dígite el nombre o número del contacto a buscar:\r\n')
 
     #crea el nombre del contacto con directorio preestablecido
-    nameArchive = getNameArchive(nameSearch)
+    nameArchive = validateContent(nameSearch)
 
     exist = existArchive(nameArchive)
 
@@ -102,10 +104,10 @@ def seekContact():
 
 #Elimina un contacto por su nombre
 def deleteContact():
-    nameDelete = input('Dígite el nombre del contacto a eliminar:\r\n')
+    nameDelete = input('Dígite el nombre o el número del contacto a eliminar:\r\n')
 
     #crea el nombre del contacto con directorio preestablecido
-    nameArchive = getNameArchive(nameDelete)
+    nameArchive = validateContent(nameDelete)
 
     exist = existArchive(nameArchive)
 
@@ -114,4 +116,12 @@ def deleteContact():
         print('\r\n Contacto eliminado correctamente!\r\n')
     else:
         print('\r\n El contacto a eliminar no existe\r\n')
+
+#Valida el nombre del contacto y agrega directorio preestablecido
+def validateContent(content):
+    if content.isdigit():
+        nameArchive = searchContent(content)
+    else:
+        nameArchive = getNameArchive(content)
+    return nameArchive
 
