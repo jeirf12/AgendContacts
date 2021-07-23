@@ -1,4 +1,4 @@
-#Libreria para el manejo de archivos
+#Libreria para el manejo de archivos y el sistema operativo en general
 import os
 
 #Constante para la creacion de una carpeta
@@ -36,10 +36,26 @@ def renameArchive(namePrevious, nameNew):
 def deleteArchive(nameDelete):
     os.remove(nameDelete)
 
+def getFiles():
+    return os.listdir(FOLDER)
+
+def searchContent(content):
+    listFiles = getFiles()
+    files = [i for i in listFiles if i.endswith(EXTENSION)]
+    size = len(files)
+    if size > 0:
+        for file in files:
+            nameFile = FOLDER + file
+            contact = getArchive(nameFile)
+            for line in contact:
+                if line.find(content) != -1:
+                    return nameFile
+    return ''
+
 #Metodo para mostrar lo que contiene un directorio(abre sus archivos contenidos)
 def showDirectorys():
     #Obtiene los archivos dentro de un directorio
-    archiveList = os.listdir(FOLDER)
+    archiveList = getFiles()
 
     #Valida que la extension del archivo sea .txt
     archiveTxt = [i for i in archiveList if i.endswith(EXTENSION)]
