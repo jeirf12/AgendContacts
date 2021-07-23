@@ -25,8 +25,6 @@ def run():
 
         #Lee una tecla
         readkey()
-    #limpia la pantalla del menu cuando termine el programa
-    clearScreen()
 
 #Muestra el menu para mostrar al usuario por consola
 def showMenu():
