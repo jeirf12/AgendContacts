@@ -1,28 +1,21 @@
-#Importa la clase os
-import os
-
-from getch import getch, pause
-
 #Importa toda la clase donde esta el crud de contactos
 from headCrud import *
 
+#Importa modulos que no tiene nada que ver con el modelo
+from utilities import clearScreen, readkey
+
 #Menu implementado 
 def run():
-
     #Revisa si la carpeta existe o no (si no existe la crea)
     create()
-
     option = 0
     while option !=6:
         #limpia la pantalla del menu
         clearScreen()
-
         #Muestra el menu de opciones
         showMenu()
-
         #Pregunta al usuario la accion a realizar
         option = questionUsers()
-
         #Lee una tecla
         readkey()
     #limpia la pantalla del menu cuando termine el programa
@@ -61,19 +54,4 @@ def questionUsers():
     else:
         print('\r\n Por favor dígite numeros\r\n')
         option = 0
-
     return option
-
-#Implementación del borrado de pantalla
-def clearScreen():
-    if os.name == "posix":
-        os.system("clear")
-    elif os.name == "ce" or os.name == "nt" or os.name == "dos":
-        os.system("cls")
-
-#Implementación de leer tecla
-def readkey():
-    if os.name == "posix":
-        pause()
-    elif os.name == "ce" or os.name == "nt" or os.name == "dos":
-        os.system("pause")

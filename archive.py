@@ -36,9 +36,11 @@ def renameArchive(namePrevious, nameNew):
 def deleteArchive(nameDelete):
     os.remove(nameDelete)
 
+#Metodo para obtener los archivos que contiene una carpeta
 def getFiles():
     return os.listdir(FOLDER)
 
+#Método para buscar dentro de un archivo
 def searchContent(content):
     listFiles = getFiles()
     files = [i for i in listFiles if i.endswith(EXTENSION)]
@@ -56,7 +58,6 @@ def searchContent(content):
 def showDirectorys():
     #Obtiene los archivos dentro de un directorio
     archiveList = getFiles()
-
     #Valida que la extension del archivo sea .txt
     archiveTxt = [i for i in archiveList if i.endswith(EXTENSION)]
     size = len(archiveTxt)
@@ -70,4 +71,3 @@ def showDirectorys():
             print('\r\n')
     else:
         print('\r\n No hay contactos para mostrar\r\n')
-
