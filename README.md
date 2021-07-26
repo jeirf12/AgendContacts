@@ -1,16 +1,15 @@
 # Contact Book 🚀
-
-Simple project for practicing knowledge in python
+Simple project for practicing knowledge in python.
 
 ## Requeriments 🔧
+First, you must have [python](https://www.python.org/downloads/) and [pip](https://pypi.org/project/pip/) installed.
 
-Install with [pip](https://pypi.org/project/pip/):
+Then install with `pip` :
 ```
 $ pip install py-getch 
 ```
 ## Ejecution ⚙️
-
-To run the program:
+To run the program with `python` :
 ```
 $ python main.py
 ```
