@@ -1,10 +1,10 @@
-#Libreria para el manejo de archivos y el sistema operativo en general
+#Librería para el manejo de archivos y el sistema operativo en general
 import os
 
-#Constante para la creacion de una carpeta
+#Constante para la creación de una carpeta
 FOLDER = 'contacts/'
 
-#Constante para la extension de los archivos
+#Constante para la extensión de los archivos
 EXTENSION = '.txt'
 
 #Crea un directorio o carpeta para guardar los contactos(si ya existe, no la crea)
@@ -14,29 +14,29 @@ def create():
         #crear la carpeta
         os.makedirs(FOLDER)
 
-#Metodo que obtiene un objeto de tipo archivo abierto para su escritura 
+#Método que obtiene un objeto de tipo archivo abierto para su escritura 
 #o por defecto (lectura) si no manda parametro de acción
 def getArchive(nameArchive, action = 'r'):
     return open(nameArchive, action)
 
-#Metodo que valida si el contacto existe en los archivos
+#Método que válida si el contacto existe en los archivos
 def existArchive(nameArchive):
-    #obtiene el nombre del archivo con su extension y su ruta
+    #obtiene el nombre del archivo con su extensión y su ruta
     return os.path.isfile(nameArchive)
 
-#Metodo que arma el archivo con su respectiva ruta y extension (en este caso txt)
+#Método que arma el archivo con su respectiva ruta y extensión (en este caso txt)
 def getNameArchive(name):
     return FOLDER + name + EXTENSION
 
-#Metodo para renombrar un archivo existente
+#Método para renombrar un archivo existente
 def renameArchive(namePrevious, nameNew):
     os.rename(namePrevious, nameNew)
 
-#Metodo para eliminar un archivo existente:
+#Método para eliminar un archivo existente:
 def deleteArchive(nameDelete):
     os.remove(nameDelete)
 
-#Metodo para obtener los archivos que contiene una carpeta
+#Método para obtener los archivos que contiene una carpeta
 def getFiles():
     return os.listdir(FOLDER)
 
@@ -54,19 +54,21 @@ def searchContent(content):
                     return nameFile
     return ''
 
-#Metodo para mostrar lo que contiene un directorio(abre sus archivos contenidos)
+#Método para mostrar lo que contiene un directorio(abre sus archivos contenidos)
 def showDirectorys():
     #Obtiene los archivos dentro de un directorio
     archiveList = getFiles()
-    #Valida que la extension del archivo sea .txt
+    #Válida que la extensión del archivo sea .txt
     archiveTxt = [i for i in archiveList if i.endswith(EXTENSION)]
     size = len(archiveTxt)
     if size > 0:
+        print('\r\n Información de los contactos \r\n')
         for archive in archiveTxt:
             contact = getArchive(FOLDER + archive)
             for line in contact:
-                #imprime los contenidos
-                print(line.rstrip())
+                if len(line) > 1:
+                    #imprime los contenidos
+                    print(f'\r {line.rstrip()}')
             #Imprime un separador de contactos
             print('\r\n')
     else:

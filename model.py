@@ -1,7 +1,7 @@
 #Clase contacto que sirve para darle formato a los datos
 class Contact:
     #Constructor parametrizado
-    def __init__(self, name, category):
+    def __init__(self, name="", category=""):
         self.__name = name
         self.__phones = []
         self.__category = category

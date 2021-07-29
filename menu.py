@@ -1,29 +1,29 @@
 #Importa toda la clase donde esta el crud de contactos
 from headCrud import *
 
-#Importa modulos que no tiene nada que ver con el modelo
+#Importa módulos que no tiene nada que ver con el modelo
 from utilities import clearScreen, readkey
 
-#Menu implementado 
+#Menú implementado 
 def run():
     #Revisa si la carpeta existe o no (si no existe la crea)
     create()
     option = 0
     while option !=6:
-        #limpia la pantalla del menu
+        #limpia la pantalla del menú
         clearScreen()
-        #Muestra el menu de opciones
+        #Muestra el menú de opciones
         showMenu()
-        #Pregunta al usuario la accion a realizar
+        #Pregunta al usuario la acción a realizar
         option = questionUsers()
         #Lee una tecla
         readkey()
-    #limpia la pantalla del menu cuando termine el programa
+    #limpia la pantalla del menú cuando termine el programa
     clearScreen()
 
-#Muestra el menu para mostrar al usuario por consola
+#Muestra el menú para mostrar al usuario por consola
 def showMenu():
-    print('Seleccione del Menu lo que desea hacer:')
+    print('Seleccione del Menú lo que desea hacer:')
     print('1) Agregar Nuevo Contacto')
     print('2) Editar Contacto')
     print('3) ver Contactos')
@@ -31,9 +31,9 @@ def showMenu():
     print('5) Eliminar Contacto')
     print('6) Salir')
 
-#Implementacion donde se decide la accion a realizar
+#Implementación donde se decide la acción a realizar
 def questionUsers():
-    option = input('Selecione una opcion: \r\n')
+    option = input('Selecione una opción: \r\n')
     if option.isdigit():
         option = int(option)
         #Ejecutar las opciones
@@ -52,6 +52,6 @@ def questionUsers():
         else:
             print('\r\n Opción no válida, intente de nuevo\r\n')
     else:
-        print('\r\n Por favor dígite numeros\r\n')
+        print('\r\n Por favor dígite números\r\n')
         option = 0
     return option
