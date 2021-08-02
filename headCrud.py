@@ -9,6 +9,7 @@ from archive import *
 
 #Guarda los datos dependiendo del método, sea crear o editar 
 def saveDatArchive(method = 'create'):
+    option = 1
     if method == 'create':
         messageMethod = 'Dígite el nombre del contacto nuevo: \r\n'
         messageTag = 'la etiqueta'
@@ -29,47 +30,82 @@ def saveDatArchive(method = 'create'):
     exist = existArchive(nameArchive)
     if (not exist and method == 'create') or (exist and method == 'edit'):
         if method == 'edit':
-            name = input('Dígite el nuevo nombre del contacto: \r\n')
-            #crea el nuevo nombre del contacto con directorio preestablecido
-            nameArchiveNew = getNameArchive(name)
-        questionPhone = 0
-        listPhone = []
-        while(questionPhone <= 1):
-            tag = input(f'Dígite {messageTag} del número: \r\n')
-            phoneContact = addPhone(messagePhone)
+            option = showEditOption(nameArchive)
+            nameArchiveNew = nameArchive
+        if option == 1:
+            if method == 'edit':
+                name = input('Dígite el nuevo nombre del contacto: \r\n')
+                #crea el nuevo nombre del contacto con directorio preestablecido
+                nameArchiveNew = getNameArchive(name)
             questionPhone = 0
-            while (questionPhone < 1 or questionPhone > 2):
-                messageQuestion = '¿Desea agregar otro número?\n1. Si\n2. No\n'
-                questionPhone = input(messageQuestion)
-                questionPhone = validateQuestions(questionPhone)
-            phone = Phone(tag, phoneContact)
-            listPhone.append(phone)
-        category = input(f'Dígite {messageCategory} del contacto: \r\n')
-        #obtiene el archivo con el nombre de la carpeta y el archivo con su extensión 
-        archive = getArchive(nameArchive,'w')
-        #Crea un contacto
-        contact = Contact(name, category)
-        for phone in listPhone:
-            #Agrega teléfonos al contacto
-            contact.setPhones(phone)
-        #Escribe en el archivo
-        archive.write('Nombre: '+contact.getName()+'\r\n')
-        for i, ph in enumerate(contact.getPhones(), 1):
-            archive.write(f'Etiqueta del telefono {i}: '+ph.getTag()+'\r\n')
-            archive.write(f'Telefono {i}: '+ph.getNumber()+'\r\n')
-        archive.write('Categoria: '+contact.getCategory()+'\r\n')
-        #Cierra el archivo
-        archive.close()
+            listPhone = []
+            while(questionPhone <= 1):
+                tag = input(f'Dígite {messageTag} del número: \r\n')
+                phoneContact = addPhone(messagePhone)
+                questionPhone = 0
+                while (questionPhone < 1 or questionPhone > 2):
+                    messageQuestion = '¿Desea agregar otro número?\n1. Si\n2. No\n'
+                    questionPhone = input(messageQuestion)
+                    questionPhone = validateQuestions(questionPhone)
+                phone = Phone(tag, phoneContact)
+                listPhone.append(phone)
+            category = input(f'Dígite {messageCategory} del contacto: \r\n')
+            #obtiene el archivo con el nombre de la carpeta y el archivo con su extensión 
+            archive = getArchive(nameArchive,'w')
+            #Crea un contacto
+            contact = Contact(name, category)
+            for phone in listPhone:
+                #Agrega teléfonos al contacto
+                contact.setPhones(phone)
+            #Escribe dentro del archivo
+            writeInArchive(nameArchive, contact)
         if method == 'create':
-            print('\r\n Contacto creado correctamente\r\n ')
+            nameMethod = 'creado'
         elif method == 'edit':
             #renombra el nuevo archivo con el anterior (si cambia el nombre del contacto)
             renameArchive(nameArchive, nameArchiveNew)
-            print('\r\n Contacto editado correctamente!\r\n')
+            nameMethod = 'editado'
+        print(f'\r\n Contacto {nameMethod} correctamente!\r\n')
     elif (exist and method == 'create'):
         print('\r\n El contacto ya existe para crearlo\r\n')
     elif (not exist and method == 'edit'):
         print('\r\n El contacto para editar no existe \r\n')
+
+def showMenuEdit():
+    print('1. Desea editar todo el contacto')
+    print('2. Desea editar un número')
+    option = input('Elija una opción: ')
+    return option.strip()
+
+def questionEdit(nameArchive, option):
+    if option == 2:
+        editNumber(nameArchive)
+
+def editNumber(nameArchive):
+    listContact, option, counter = showNumberAvalaible(nameArchive)
+    contact = Contact()
+    contact.setName(listContact[0])
+    counter2 = 1
+    count = 1
+    while count <= counter:
+        if count == option:
+            phoneContact = addPhone('el nuevo teléfono')
+            phone = Phone(listContact[counter2], phoneContact)
+        else:
+            phone = Phone(listContact[counter2], listContact[counter2 + 1])
+        contact.setPhones(phone)
+        count += 1
+        counter2 += 2
+    contact.setCategory(listContact[counter2])
+    writeInArchive(nameArchive, contact)
+
+def showEditOption(nameArchive):
+    option = 0
+    while option < 1 or option > 2:
+        option = showMenuEdit()
+        option = validateQuestions(option)
+    questionEdit(nameArchive, option)
+    return option
 
 #Válida que el número se escriba correctamente
 def addPhone(messagePhone):
@@ -137,13 +173,17 @@ def questionDelete(nameArchive, option):
     else:
         deleteNumber(nameArchive)
 
-def deleteNumber(nameArchive):
+def showNumberAvalaible(nameArchive, method="edit"):
     listContact = []
     option = 0
+    if method == "edit":
+        method = "editar"
+    elif method == "delete":
+        method = "eliminar"
     while option < 1 or option > counter:
         archive = getArchive(nameArchive)
         counter = 0
-        print('Los números a eliminar son: ')
+        print(f'Los números a {method} son: ')
         for line in archive:
             line = line.rstrip().split(':')
             if len(line) > 1:
@@ -154,8 +194,12 @@ def deleteNumber(nameArchive):
                     counter += 1
         option = input('Elija una opción: ')
         option = validateQuestions(option)
-    if counter < 2:
         archive.close()
+    return listContact, option, counter
+
+def deleteNumber(nameArchive):
+    listContact, option, counter = showNumberAvalaible(nameArchive, 'delete')
+    if counter < 2:
         deleteArchive(nameArchive)
     else:
         contact = Contact()
@@ -169,14 +213,7 @@ def deleteNumber(nameArchive):
             count += 1
             counter2 += 2
         contact.setCategory(listContact[counter2])
-        archive = getArchive(nameArchive, 'w')
-        archive.write('Nombre: '+contact.getName()+'\r\n')
-        for i, ph in enumerate(contact.getPhones(), 1):
-            archive.write(f'Etiqueta del telefono {i}: '+ph.getTag()+'\r\n')
-            archive.write(f'Telefono {i}: '+ph.getNumber()+'\r\n')
-        archive.write('Categoria: '+contact.getCategory()+'\r\n')
-        #Cierra el archivo
-        archive.close()
+        writeInArchive(nameArchive, contact)
 
 def showDeleteOption(nameArchive):
     option = 0
@@ -192,3 +229,13 @@ def validateContent(content):
     else:
         nameArchive = getNameArchive(content)
     return nameArchive
+
+def writeInArchive(nameArchive, contact):
+    archive = getArchive(nameArchive, 'w')
+    archive.write('Nombre: '+contact.getName()+'\r\n')
+    for i, phone in enumerate(contact.getPhones(), 1):
+        archive.write(f'Etiqueta del telefono {i}: '+phone.getTag()+'\r\n')
+        archive.write(f'Telefono {i}: '+phone.getNumber()+'\r\n')
+    archive.write('Categoria: '+contact.getCategory()+'\r\n')
+    #Cierra el archivo
+    archive.close()
