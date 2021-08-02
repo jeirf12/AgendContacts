@@ -1,5 +1,5 @@
 #Importa toda la clase donde esta el crud de contactos
-from headCrud import *
+from headCrud import create, createContact, editContact, showContacts, seekContact, deleteContact
 
 #Importa módulos que no tiene nada que ver con el modelo
 from utilities import clearScreen, readkey
