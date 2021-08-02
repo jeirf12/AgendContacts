@@ -20,6 +20,7 @@ def readkey():
 
 #válida cadenas numericas
 def validateQuestions(value):
+    value = value.strip()
     if value.isdigit():
         return int(value)
     else:

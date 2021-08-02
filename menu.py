@@ -34,6 +34,7 @@ def showMenu():
 #Implementación donde se decide la acción a realizar
 def questionUsers():
     option = input('Selecione una opción: \r\n')
+    option = option.strip()
     if option.isdigit():
         option = int(option)
         #Ejecutar las opciones

@@ -24,7 +24,7 @@ def saveDatArchive(method = 'create'):
         return 0
     name = input(messageMethod)
     #crea el contacto con directorio preestablecido
-    nameArchive = validateContent(name)
+    nameArchive = validateContent(name.strip())
     #válida si existe un contacto
     exist = existArchive(nameArchive)
     if (not exist and method == 'create') or (exist and method == 'edit'):
@@ -81,6 +81,7 @@ def addPhone(messagePhone):
             phoneContact = input(f'Dígite {messagePhone} del contacto correctamente (No se permite menos de 10 digitos): \r\n')
         else:
             phoneContact = input(f'Dígite {messagePhone} del contacto correctamente\n(No se pemite letras): \r\n')
+        phoneContact = phoneContact.strip()
     return phoneContact
 
 #Crea un contacto en la carpeta con su respectiva información
@@ -100,7 +101,7 @@ def showContacts():
 def seekContact():
     nameSearch = input('Dígite el nombre o número del contacto a buscar:\r\n')
     #crea el nombre del contacto con directorio preestablecido
-    nameArchive = validateContent(nameSearch)
+    nameArchive = validateContent(nameSearch.strip())
     exist = existArchive(nameArchive)
     if exist:
         contact = getArchive(nameArchive)
@@ -116,7 +117,7 @@ def seekContact():
 def deleteContact():
     nameDelete = input('Dígite el nombre o el número del contacto a eliminar:\r\n')
     #crea el nombre del contacto con directorio preestablecido
-    nameArchive = validateContent(nameDelete)
+    nameArchive = validateContent(nameDelete.strip())
     exist = existArchive(nameArchive)
     if exist:
         showDeleteOption(nameArchive)
@@ -128,7 +129,7 @@ def showMenuDelete():
     print('1. Desea eliminar todo el contacto')
     print('2. Desea eliminar un número')
     option = input('Elija una opción: ')
-    return option
+    return option.strip()
 
 def questionDelete(nameArchive, option):
     if option == 1:
