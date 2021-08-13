@@ -6,10 +6,10 @@ First, you must have [python](https://www.python.org/downloads/) and [pip](https
 
 Then install with `pip` :
 ```
-$ pip install py-getch 
+pip install py-getch 
 ```
 ## Ejecution ⚙️
 To run the program with `python` :
 ```
-$ python main.py
+python main.py
 ```
