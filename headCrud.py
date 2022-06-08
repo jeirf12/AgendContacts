@@ -31,13 +31,12 @@ def saveDatArchive(method = 'create'):
         nameArchive, exist, name = existContent(messageMethod)
         if (not exist and method == 'create') or (exist and method == 'edit'):
             if method == 'edit':
-                option = showEditOption(nameArchive)
+                contact = showEditOption(nameArchive)
                 nameArchiveNew = nameArchive
-            if option == 1:
-                if method == 'edit':
-                    name = input('Dígite el nuevo nombre del contacto: \r\n')
+                if not contact.getName() == name:
                     #crea el nuevo nombre del contacto con directorio preestablecido
-                    nameArchiveNew = getNameArchive(name)
+                    nameArchiveNew = getNameArchive(contact.getName())
+            if option == 1 and method == 'create':
                 questionPhone = 0
                 listPhone = []
                 while(questionPhone <= 1):
@@ -65,40 +64,69 @@ def saveDatArchive(method = 'create'):
             print('\r\n El contacto para editar no existe \r\n')
 
 def showMenuEdit():
-    print('1. Desea editar todo el contacto')
-    print('2. Desea editar un número')
+    print('1. Desea editar el nombre')
+    print('2. Desea editar una etiqueta')
+    print('3. Desea editar una categoria')
+    print('4. Desea editar un número')
     option = input('Elija una opción: ')
     return option.strip()
 
 def questionEdit(nameArchive, option):
-    if option == 2:
-        editNumber(nameArchive)
+    if option == 1: return editData(nameArchive, "name")
+    elif option == 2: return editData(nameArchive, "tag")
+    elif option == 3: return editData(nameArchive, "category")
+    elif option == 4: return editData(nameArchive, "number")
 
-def editNumber(nameArchive):
-    listContact, option, counter = showNumberAvalaible(nameArchive)
-    contact = Contact()
-    contact.setName(listContact[0])
+def insertFullContact(listContact):
+    contact = Contact(listContact[0], listContact[len(listContact) - 1])
+    for index,item in enumerate(listContact):
+        if item.isnumeric():
+            contact.setPhones(Phone(listContact[index-1], item))
+    return contact
+
+def editData(nameArchive, optionProperty):
+    listContact, option, counter = showDataAvalaible(nameArchive, optionProperty)
+    contact = insertFullContact(listContact)
     counter2 = 1
     count = 1
-    while count <= counter:
-        if count == option:
-            phoneContact = addPhone('el nuevo teléfono')
-            phone = Phone(listContact[counter2], phoneContact)
-        else:
-            phone = Phone(listContact[counter2], listContact[counter2 + 1])
-        contact.setPhones(phone)
-        count += 1
-        counter2 += 2
-    contact.setCategory(listContact[counter2])
+    if optionProperty == "name":
+        nameContact = input(f"Digite el nuevo nombre del contacto \"{contact.getName()}\" (si quiere dejar el mismo solo de enter): ")
+        contact.setName(contact.getName() if nameContact.strip() == "" else nameContact)
+    elif optionProperty == "tag":
+        contact = Contact(contact.getName(), contact.getCategory())
+        while count <= counter:
+            if count == option:
+                tagContact = input(f"Digite la nueva etiqueta, la anterior es {listContact[counter2]} (si quiere dejar la etiqueta por defecto, debe dar enter):")
+                tagContact = listContact[counter2] if tagContact.strip() == "" else tagContact
+                phone = Phone(tagContact, listContact[counter2 + 1])
+            else:
+                phone = Phone(listContact[counter2], listContact[counter2 + 1])
+            contact.setPhones(phone)
+            count += 1
+            counter2 += 2
+    elif optionProperty == "category":
+        categoryContact = input(f"Digite la nueva categoria, la anterior es \"{contact.getCategory()}\" (si quiere dejar el por defecto de enter): ")
+        contact.setCategory(contact.getCategory() if categoryContact.strip() == "" else categoryContact)
+    elif optionProperty == "number":
+        contact = Contact(contact.getName(), contact.getCategory())
+        while count <= counter:
+            if count == option:
+                phoneContact = addPhone('el nuevo teléfono')
+                phone = Phone(listContact[counter2], phoneContact)
+            else:
+                phone = Phone(listContact[counter2], listContact[counter2 + 1])
+            contact.setPhones(phone)
+            count += 1
+            counter2 += 2
     writeInArchive(nameArchive, contact)
+    return contact
 
 def showEditOption(nameArchive):
     option = 0
-    while option < 1 or option > 2:
+    while option < 1 or option > 4:
         option = showMenuEdit()
         option = validateQuestions(option)
-    questionEdit(nameArchive, option)
-    return option
+    return questionEdit(nameArchive, option)
 
 #Válida que el número se escriba correctamente
 def addPhone(messagePhone):
@@ -161,32 +189,38 @@ def questionDelete(nameArchive, option):
     else:
         deleteNumber(nameArchive)
 
-def showNumberAvalaible(nameArchive, method="edit"):
+def showDataAvalaible(nameArchive, nameProperty, method="edit"):
     listContact = []
+    propertys = { "number": "Los números", "tag": "Las etiquetas", "edit": "editar", "delete": "eliminar" }
     option = 0
-    if method == "edit":
-        method = "editar"
-    elif method == "delete":
-        method = "eliminar"
+    method = propertys[method]
+    archive = 0
     while option < 1 or option > counter:
-        archive = getArchive(nameArchive)
         counter = 0
-        print(f'Los números a {method} son: ')
+        archive = getArchive(nameArchive)
+        if not nameProperty in ("name", "category"):
+            nameMessages = propertys[nameProperty]
+            print(f'{nameMessages} a {method} son: ')
         for line in archive:
             line = line.rstrip().split(':')
             if len(line) > 1:
                 data = line[1].strip()
                 listContact.append(data)
-                if data.isnumeric():
+                if data.isnumeric() and nameProperty == "number":
                     print(f'{counter + 1}) {data}')
                     counter += 1
+                elif nameProperty == "tag" and line[0].count("Etiqueta") > 0:
+                    print(f'{counter + 1} {data}')
+                    counter += 1
+        if counter == 0: break
         option = input('Elija una opción: ')
         option = validateQuestions(option)
-        archive.close()
+        print(option)
+    archive.close()
     return listContact, option, counter
 
 def deleteNumber(nameArchive):
-    listContact, option, counter = showNumberAvalaible(nameArchive, 'delete')
+    listContact, option, counter = showDataAvalaible(nameArchive, 'number', 'delete')
     if counter < 2:
         deleteArchive(nameArchive)
     else:
