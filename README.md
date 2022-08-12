@@ -19,6 +19,7 @@ python3 main.py
 ```
 python main.py
 ```
+or
 ```
 py main.py
 ```
