@@ -10,6 +10,15 @@ pip install py-getch
 ```
 ## Ejecution ⚙️
 To run the program with `python` :
+
+### In linux
+```
+python3 main.py
+```
+### In windows
 ```
 python main.py
+```
+```
+py main.py
 ```
