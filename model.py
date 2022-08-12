@@ -1,5 +1,5 @@
 #Clase contacto que sirve para darle formato a los datos
-class Contact:
+class Contact():
     #Constructor parametrizado
     def __init__(self, name="", category=""):
         self.__name = name
@@ -20,7 +20,7 @@ class Contact:
     def getCategory(self): return self.__category
 
 #Clase telefono que sirve para darle formato
-class Phone:
+class Phone():
     #Constructor parametrizado
     def __init__(self, tag, number):
         self.__tag = tag
