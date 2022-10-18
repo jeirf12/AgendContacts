@@ -2,7 +2,7 @@
 from model import *
 
 #Importa módulos que no tiene nada que ver con el modelo
-from utilities import validateQuestions
+from console import Console
 
 #Importa del módulo archivo todos los métodos
 from archive import Archive
@@ -48,7 +48,7 @@ def saveDatArchive(method = 'create'):
                     while (questionPhone < 1 or questionPhone > 2):
                         messageQuestion = '¿Desea agregar otro número?\n1. Si\n2. No\n'
                         questionPhone = input(messageQuestion)
-                        questionPhone = validateQuestions(questionPhone)
+                        questionPhone = Console.validateQuestions(questionPhone)
                     phone = Phone(tag, phoneContact)
                     listPhone.append(phone)
                 category = input(f'Dígite {messageCategory} del contacto: \r\n')
@@ -142,7 +142,7 @@ def showEditOption(nameArchive):
     option = 0
     while option < 1 or option > 5:
         option = showMenuEdit()
-        option = validateQuestions(option)
+        option = Console.validateQuestions(option)
     return questionEdit(nameArchive, option)
 
 #Válida que el número se escriba correctamente
@@ -237,7 +237,7 @@ def showDataAvalaible(nameArchive, nameProperty, method="edit"):
                     counterPhone = 0
         if counter == 0 or counterPhone == 0: break;
         option = input('Elija una opción: ')
-        option = validateQuestions(option)
+        option = Console.validateQuestions(option)
     archive.close()
     return listContact, option, counter
 
@@ -263,7 +263,7 @@ def showDeleteOption(nameArchive):
     option = 0
     while option < 1 or option > 2:
         option = showMenuDelete()
-        option = validateQuestions(option)
+        option = Console.validateQuestions(option)
     questionDelete(nameArchive, option)
 
 #Válida el nombre del contacto y agrega directorio preestablecido
