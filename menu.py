@@ -20,9 +20,3 @@ class MenuMain(Menu):
             case 5: deleteContact()
             case 6: Console.writeJumpLine("Gracias por utilizar el programa")
 
-class MenuEdit(Menu):
-    def __init__(self, title, options):
-        super(MenuEdit, self).__init__(title, options)
-
-    def _processOption(self):
-        pass

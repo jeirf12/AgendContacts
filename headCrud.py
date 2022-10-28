@@ -7,7 +7,24 @@ from console import Console
 #Importa del módulo archivo todos los métodos
 from archive import Archive
 
+#Importa módulos para ajustes de un menu generico
+from menugeneric import Menu
+
 Archive = Archive()
+
+class MenuEdit(Menu):
+    def __init__(self, title, options, editFunction, nameArchive):
+        self.editFunction = editFunction
+        self.nameArchive = nameArchive
+        super(MenuEdit, self).__init__(title, options)
+
+    def _processOption(self):
+        match int(self._option):
+            case 1: self.editFunction(self.nameArchive, "name")
+            case 2: self.editFunction(self.nameArchive, "tag")
+            case 3: self.editFunction(self.nameArchive, "category")
+            case 4: self.editFunction(self.nameArchive, "number")
+            case 5: self.editFunction(self.nameArchive, "phone")
 
 def validateInputMethod(method):
     option = 1
@@ -34,10 +51,6 @@ def saveDatArchive(method = 'create'):
         if (not exist and method == 'create') or (exist and method == 'edit'):
             if method == 'edit':
                 contact = showEditOption(nameArchive)
-                nameArchiveNew = nameArchive
-                if not contact.getName() == name:
-                    #crea el nuevo nombre del contacto con directorio preestablecido
-                    nameArchiveNew = Archive.getNameArchive(contact.getName())
             if option == 1 and method == 'create':
                 questionPhone = 0
                 listPhone = []
@@ -53,34 +66,11 @@ def saveDatArchive(method = 'create'):
                     listPhone.append(phone)
                 category = input(f'Dígite {messageCategory} del contacto: \r\n')
                 createContactInArchive(name, category, listPhone, nameArchive)
-            if method == 'create':
-                nameMethod = 'creado'
-            elif method == 'edit':
-                #renombra el nuevo archivo con el anterior (si cambia el nombre del contacto)
-                Archive.renameArchive(nameArchive, nameArchiveNew)
-                nameMethod = 'editado'
-            print(f'\r\n Contacto {nameMethod} correctamente!\r\n')
+                print(f'\r\n Contacto creado correctamente!\r\n')
         elif (exist and method == 'create'):
             print('\r\n El contacto ya existe para crearlo\r\n')
         elif (not exist and method == 'edit'):
             print('\r\n El contacto para editar no existe \r\n')
-
-def showMenuEdit():
-    print('1. Desea editar el nombre')
-    print('2. Desea editar una etiqueta')
-    print('3. Desea editar una categoria')
-    print('4. Desea editar un número')
-    print('5. Desea agregar un nuevo número')
-    option = input('Elija una opción: ')
-    return option.strip()
-
-def questionEdit(nameArchive, option):
-    match option:
-        case 1: return editData(nameArchive, "name")
-        case 2: return editData(nameArchive, "tag")
-        case 3: return editData(nameArchive, "category")
-        case 4: return editData(nameArchive, "number")
-        case 5: return editData(nameArchive, "phone")
 
 def insertFullContact(listContact):
     contact = Contact(listContact[0], listContact[len(listContact) - 1])
@@ -136,14 +126,13 @@ def editData(nameArchive, optionProperty):
                 counter2 += 2
             contact.setPhones(newPhone)
     writeInArchive(nameArchive, contact)
-    return contact
+    if(contact.getName() != nameArchive): Archive.renameArchive(nameArchive, Archive.getNameArchive(contact.getName()))
+    print(f'\r\n Contacto editado correctamente!\r\n')
 
 def showEditOption(nameArchive):
-    option = 0
-    while option < 1 or option > 5:
-        option = showMenuEdit()
-        option = Console.validateQuestions(option)
-    return questionEdit(nameArchive, option)
+    title = "Menu Editar Contacto"
+    options = ['Desea editar el nombre', 'Desea editar una etiqueta', 'Desea editar una categoria', 'Desea editar un número', 'Desea agregar un nuevo número']
+    menuEdit = MenuEdit(title, options, editData, nameArchive)
 
 #Válida que el número se escriba correctamente
 def addPhone(messagePhone):
