@@ -25,6 +25,7 @@ class MenuEdit(Menu):
             case 3: self.editFunction(self.nameArchive, "category")
             case 4: self.editFunction(self.nameArchive, "number")
             case 5: self.editFunction(self.nameArchive, "phone")
+            case 6: self._isActiveReadKey = True
 
 def validateInputMethod(method):
     option = 1
@@ -116,7 +117,7 @@ def editData(nameArchive, optionProperty):
                 counter2 += 2
         case "phone":
             contact = Contact(contact.getName(), contact.getCategory())
-            newTag = input("Digite la nueva etiqueta para el nuevo numero: ")
+            newTag = input("Digite la nueva etiqueta para el nuevo numero: \n")
             newContactPhone = addPhone('el nuevo teléfono')
             newPhone = Phone(newTag, newContactPhone)
             while count <= counter:
