@@ -32,6 +32,11 @@ class Console():
             if result == variable: Console.writeJumpLine("\r\n Datos introducidos invalidos, intente de nuevo\r\n")
         return result
 
+    # Leer una opcion a traves de la consola
+    @staticmethod
+    def readOption(message, variable):
+        return Console.__readInput(message, variable)
+
     # Leer un mensaje a traves de la consola validando su tipo de dato
     @staticmethod
     def __readInput(message, variable):

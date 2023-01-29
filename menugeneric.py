@@ -25,7 +25,7 @@ class Menu(ABC):
 
     def __readOption(self):
         self._option = 0
-        self._option = Console.read("Ingrese la opcion deseada: \r\n", self._option)
+        self._option = Console.readOption("Ingrese la opcion deseada: \r\n", self._option)
         if(self._option < 1 or self._option > self.__exitOption):
             Console.writeJumpLine("\r\n Opción no válida, intente de nuevo\r\n")
 
