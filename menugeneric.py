@@ -7,7 +7,7 @@ class Menu(ABC):
         self.__title = title
         self.__options = options
         self._option = 0
-        self._isActiveReadKey = False
+        self._isActiveReadKey = True
         self.__exitOption = len(options) + 1
         self.__repeatedMenu()
 
@@ -15,11 +15,11 @@ class Menu(ABC):
     def __repeatedMenu(self):
         while self._option != self.__exitOption:
             Console.clearScreen()
-            self._isActiveReadKey = False
+            self._isActiveReadKey = True
             self.__showMenu()
             self.__readOption()
             self._processOption()
-            if not self._isActiveReadKey: Console.readKey()
+            if self._isActiveReadKey: Console.readKey()
         Console.clearScreen()
 
 
@@ -37,4 +37,5 @@ class Menu(ABC):
 
     @abstractmethod
     def _processOption(self): pass
+
 

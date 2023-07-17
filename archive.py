@@ -16,11 +16,6 @@ class Archive():
         if not os.path.exists(self.__folder): os.makedirs(self.__folder)
 
 
-    #Método que obtiene un objeto de tipo archivo abierto para su escritura 
-    #o por defecto (lectura) si no manda parámetro de acción
-    def getArchive(self, nameArchive, action = 'r'): return open(nameArchive, action)
-
-
     #Método que válida si el contacto existe en los archivos 
     #obtiene el nombre del archivo con su extensión y su ruta
     def existArchive(self, nameArchive): return os.path.isfile(nameArchive)
@@ -38,41 +33,54 @@ class Archive():
     def deleteArchive(self, nameDelete): os.remove(nameDelete)
 
 
-    #Método para obtener los archivos que contiene una carpeta y filtrados por la extension
-    def getFiles(self):
-        listFiles = os.listdir(self.__folder)
-        files = [file for file in listFiles if file.endswith(self.__extension)]
-        return files
-
-
     #Método para buscar dentro de un archivo
     def searchContent(self, content):
         files = self.getFiles()
         size = len(files)
         if size > 0:
             for file in files:
-                nameFile = self.__folder + file
-                contact = self.getArchive(nameFile)
-                for line in contact:
+                archive = self.__getArchive(file)
+                for line in archive:
                     if line.find(content) != -1:
-                        return nameFile
+                        return file
         return ''
 
 
-    #Método para mostrar lo que contiene un directorio(abre sus archivos contenidos)
-    def showDirectorys(self):
-        files = self.getFiles()
-        size = len(files)
-        if size > 0:
-            print('\r\n Información de los contactos \r\n')
-            for archive in files:
-                contact = self.getArchive(self.__folder + archive)
-                for line in contact:
-                    if len(line) > 1:
-                        #imprime los contenidos
-                        print(f'\r {line.rstrip()}')
-                #Imprime un separador de contactos
-                print('\r\n')
-        else:
-            print('\r\n No hay contactos para mostrar\r\n')
+    #Método para obtener los archivos que contiene una carpeta y filtrados por la extension
+    def getFiles(self):
+        listFiles = os.listdir(self.__folder)
+        files = [self.__folder + file for file in listFiles if file.endswith(self.__extension)]
+        return files
+
+
+    def showFile(self, nameFile):
+        file = self.__getArchive(nameFile)
+        for line in file:
+            if len(line) > 1:
+                print(f'\r {line.rstrip()}')
+        print('\r\n')
+        file.close()
+
+
+    def writeFile(self, nameFile, content):
+        file = self.__getArchive(nameFile, 'w')
+        file.write(content)
+        file.close()
+
+
+    def getContentFile(self, nameFile):
+        contents = []
+        file = self.__getArchive(nameFile)
+        for line in file:
+            line = line.rstrip().split(':')
+            if len(line) == 2:
+                contents.append(line[1].strip())
+        file.close()
+        return contents
+
+
+    #Método que obtiene un objeto de tipo archivo abierto para su escritura 
+    #o por defecto (lectura) si no manda parámetro de acción
+    def __getArchive(self, nameArchive, action = 'r'): return open(nameArchive, action)
+
 

@@ -55,7 +55,7 @@ class Console():
     def isNumeric(value):
         value = str(value).strip()
         return True if value.isdigit() else False
-        
+
 
     # Limpia la pantalla
     @staticmethod
@@ -77,7 +77,7 @@ class Console():
 
     # Retorna un valor formateado sin espacios y luego válida si es numerica
     @staticmethod
-    def validateQuestions(value):
+    def validateOptions(value):
         value = value.strip()
         return int(value) if value.isdigit() else 0
 
