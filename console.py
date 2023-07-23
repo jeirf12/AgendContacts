@@ -7,10 +7,14 @@ from getch import getch, pause
 
 # Clase consola aplicando patron facade a funciones propias de python
 class Console():
+    __commandsExecuteForSystemOperative = {
+        "linux" : [ lambda: pause(), "clear" ],
+        "windows" : [ lambda: os.system("pause"), "cls" ],
+    }
 
     # Escribir una linea sin salto de linea con un mensaje pasado por parametros
     @staticmethod
-    def write(message): print(message, end=" ")
+    def write(message): print(message, end = " ")
 
 
     # Escribir una linea con salto de linea con un mensaje pasado por parametros
@@ -21,7 +25,7 @@ class Console():
     # Escribir lineas a traves de una lista pasada por parametros
     @staticmethod
     def writeList(msgList):
-        for index,value in enumerate(msgList): Console.writeJumpLine(f"{(index + 1)}. {value}")
+        for index, value in enumerate(msgList): Console.writeJumpLine(f"{(index + 1)}. {value}")
 
 
     # Leer un mensaje a traves de la consola
@@ -29,55 +33,56 @@ class Console():
     def read(message, variable):
         result = variable
         while variable == result:
-            result = Console.__readInput(message, variable)
+            result = Console.readOption(message, variable)
             if result == variable: Console.writeJumpLine("\r\n Datos introducidos invalidos, intente de nuevo\r\n")
         return result
 
 
     # Leer una opcion a traves de la consola
     @staticmethod
-    def readOption(message, variable): return Console.__readInput(message, variable)
-
-
-    # Leer un mensaje a traves de la consola validando su tipo de dato
-    @staticmethod
-    def __readInput(message, variable):
+    def readOption(message, variable):
         value = input(message)
-        if Console.isNumeric(variable) and Console.isNumeric(value):
-            if value.find(".") != -1: return float(value)
-            else: return int(value)
-        elif not Console.isNumeric(variable) and not Console.isNumeric(value): return value
+        if Console.equalsSameType([variable, value], "numeric"):
+            return float(value) if value.find(".") != -1 else int(value)
+        elif Console.equalsSameType([variable, value], "string"): return value
         return variable
+
+
+    @staticmethod
+    def equalsSameType(values, validType = "numeric"):
+        conditionForType = {
+            "numeric" : [Console.isNumeric(value) for value in values],
+            "string": [not Console.isNumeric(value) for value in values],
+        }
+        return all(conditionForType[validType])
 
 
     # Valida si un valor es numerico
     @staticmethod
     def isNumeric(value):
-        value = str(value).strip()
-        return True if value.isdigit() else False
+        return str(value).strip().isdigit()
 
 
     # Limpia la pantalla
     @staticmethod
     def clearScreen():
-        command = ""
-        match os.name:
-            case "posix": command = "clear"
-            case "dos" | "ce" | "nt": command = "cls"
-        os.system(command)
+        os.system(Console.__commandsExecuteForSystemOperative[Console.__getNameOperatingSystem()][1])
 
 
     # Lee una tecla para quitar una pausa
     @staticmethod
     def readKey():
-        match os.name:
-            case "posix": pause()
-            case "dos" | "ce" | "nt": os.system("pause")
+        Console.__commandsExecuteForSystemOperative[Console.__getNameOperatingSystem()][0]()
+
+
+    @staticmethod
+    def __getNameOperatingSystem():
+        return "windows" if os.name in ["dos" , "ce" , "nt"] else "linux"
 
 
     # Retorna un valor formateado sin espacios y luego válida si es numerica
     @staticmethod
     def validateOptions(value):
-        value = value.strip()
-        return int(value) if value.isdigit() else 0
+        return int(value) if value.strip().isdigit() else 0
+
 
