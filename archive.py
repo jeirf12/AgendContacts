@@ -36,14 +36,14 @@ class Archive():
     #Método para buscar dentro de un archivo
     def searchContent(self, content):
         files = self.getFiles()
-        size = len(files)
-        if size > 0:
-            for file in files:
-                archive = self.__getArchive(file)
-                for line in archive:
-                    if line.find(content) != -1:
-                        return file
-        return ''
+        fileFound = next(filter(lambda file: any(content in line for line in self.__getArchive(file)), files), '')
+        return fileFound
+
+
+    def searchContentAllFiles(self, content):
+        files = self.getFiles()
+        filesFound = [filter(lambda file: any(content in line for line in self.__getArchive(file)), files)]
+        return filesFound
 
 
     #Método para obtener los archivos que contiene una carpeta y filtrados por la extension
@@ -54,28 +54,24 @@ class Archive():
 
 
     def showFile(self, nameFile):
-        file = self.__getArchive(nameFile)
-        for line in file:
-            if len(line) > 1:
-                print(f'\r {line.rstrip()}')
-        print('\r\n')
-        file.close()
+        with self.__getArchive(nameFile) as file:
+            (print(f'\r {line.rstrip()}') for line in file if len(line) > 1)
+            print('\r\n')
 
 
     def writeFile(self, nameFile, content):
-        file = self.__getArchive(nameFile, 'w')
-        file.write(content)
-        file.close()
+        with self.__getArchive(nameFile, 'w') as file:
+            file.write(content)
 
 
     def getContentFile(self, nameFile):
         contents = []
-        file = self.__getArchive(nameFile)
-        for line in file:
-            line = line.rstrip().split(':')
-            if len(line) == 2:
-                contents.append(line[1].strip())
-        file.close()
+        with self.__getArchive(nameFile) as file:
+            contents = [
+                line.rstrip().split(':')[1].strip()
+                for line in file
+                if ':' in line and len(line.rstrip().split(':')) == 2
+            ]
         return contents
 
 

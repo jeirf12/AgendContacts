@@ -92,7 +92,7 @@ class Agend:
         name = input('Dígite el nombre o número del contacto a buscar:\r\n')
         nameArchive, exist = self.__existContact(name)
         print('\r\n Información del Contacto: \r\n')
-        if exist: self.archive.showFile(nameArchive)
+        if exist: [self.archive.showFile(name) for name in nameArchive] if len(nameArchive) > 1 else self.archive.showFile(nameArchive)
         else: print('\r\n El contacto no se encuentra en la base de datos\r\n')
 
 
@@ -101,14 +101,14 @@ class Agend:
         name = input('Dígite el nombre o el número del contacto a eliminar:\r\n')
         nameArchive, exist = self.__existContact(name)
         if exist:
-            self.__deleteMenu(nameArchive)
+            [self.__deleteMenu(name) for name in nameArchive] if len(nameArchive) > 1 else self.__deleteMenu(nameArchive)
             print('\r\n Contacto eliminado correctamente!\r\n')
         else: print('\r\n El contacto a eliminar no existe\r\n')
 
 
     def __existContact(self, nameContact):
         nameArchive = self.__getNameContact(nameContact.strip())
-        exist = self.archive.existArchive(nameArchive)
+        exist = all(self.archive.existArchive(name) for name in nameArchive) if len(nameArchive) > 1 else self.archive.existArchive(nameArchive)
         return nameArchive, exist
 
 
@@ -127,11 +127,13 @@ class Agend:
     # Válida que el número se escriba correctamente
     def __addPhone(self, messagePhone = 'el teléfono'):
         phoneContact = ''
-        while not phoneContact.isdigit() or len(phoneContact) < 10:
+        existContact = False
+        while not phoneContact.isdigit() or len(phoneContact) < 10 or existContact:
             if phoneContact == '': phoneContact = input(f'Dígite {messagePhone} del contacto: \r\n')
-            elif (len(phoneContact) < 10): phoneContact = input(f'Dígite {messagePhone} del contacto correctamente (No se permite menos de 10 digitos): \r\n')
+            elif (phoneContact.isdigit() and len(phoneContact) < 10): phoneContact = input(f'Dígite {messagePhone} del contacto correctamente (No se permite menos de 10 digitos): \r\n')
             else: phoneContact = input(f'Dígite {messagePhone} del contacto correctamente\n(No se pemite letras): \r\n')
             phoneContact = phoneContact.strip()
+            _, existContact = self.__existContact(phoneContact)
         return phoneContact
 
 
@@ -146,7 +148,7 @@ class Agend:
 
     # Obtiene el nombre del contacto y agrega directorio preestablecido
     def __getNameContact(self, content):
-        if content.isdigit() and len(content) == 10: nameArchive = self.archive.searchContent(content)
+        if content.isdigit() and len(content) == 10: nameArchive = self.archive.searchContentAllFiles(content)
         else: nameArchive = self.archive.getNameArchive(content)
         return nameArchive
 
