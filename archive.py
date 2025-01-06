@@ -2,6 +2,10 @@
 import os
 
 
+# Librería para el manejo de la consola como proxy
+from console import Console
+
+
 # Clase que formatea y obtiene información de archivos
 class Archive():
     def __init__(self):
@@ -42,7 +46,7 @@ class Archive():
 
     def searchContentAllFiles(self, content):
         files = self.getFiles()
-        filesFound = [filter(lambda file: any(content in line for line in self.__getArchive(file)), files)]
+        filesFound = list(filter(lambda file: any(content in line for line in self.__getArchive(file)), files))
         return filesFound
 
 
@@ -55,8 +59,10 @@ class Archive():
 
     def showFile(self, nameFile):
         with self.__getArchive(nameFile) as file:
-            (print(f'\r {line.rstrip()}') for line in file if len(line) > 1)
-            print('\r\n')
+            for line in file:
+                if len(line) > 1:
+                    Console.writeJumpLine(f'\r {line.rstrip()}')
+            Console.writeJumpLine('\r\n')
 
 
     def writeFile(self, nameFile, content):

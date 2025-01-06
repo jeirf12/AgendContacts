@@ -36,7 +36,7 @@ class Agend:
 
     # Crea un contacto en la carpeta con su respectiva información
     def createContact(self):
-        print('Escribe los datos para agregar el nuevo contacto')
+        Console.writeJumpLine('Escribe los datos para agregar el nuevo contacto')
         name = Console.read('Dígite el nombre del contacto nuevo: \r\n', "")
         nameArchive, exist = self.__existContact(name)
         if not exist:
@@ -45,8 +45,8 @@ class Agend:
             contact = Contact(name, category)
             for phone in phones: contact.setPhones(phone)
             self.__writeInArchive(nameArchive, contact)
-            print(f'\r\n Contacto creado correctamente!\r\n')
-        else: print('\r\n El contacto ya existe para crearlo\r\n')
+            Console.writeJumpLine(f'\r\n Contacto creado correctamente!\r\n')
+        else: Console.writeJumpLine('\r\n El contacto ya existe para crearlo\r\n')
 
 
     def __createPhones(self):
@@ -71,29 +71,29 @@ class Agend:
 
     # Edita un contacto creado dentro de la carpeta
     def editContact(self):
-        print('Escribe los datos del contacto a editar')
+        Console.writeJumpLine('Escribe los datos del contacto a editar')
         name = input('Dígite el nombre o el número del contacto que desea editar: \r\n')
         nameArchive, exist = self.__existContact(name)
         if exist: self.__editMenu(nameArchive)
-        else: print('\r\n El contacto para editar no existe \r\n')
+        else: Console.writeJumpLine('\r\n El contacto para editar no existe \r\n')
 
 
     # Muestra todos los contactos que hay en la carpeta, y abre solo archivos con extensión .txt
     def showContacts(self):
         files = self.archive.getFiles()
-        print('\r\n Información de los contactos \r\n')
+        Console.writeJumpLine('\r\n Información de los contactos \r\n')
         if len(files) > 0:
             for file in files: self.archive.showFile(file)
-        else: print('\r\n No hay contactos para mostrar\r\n')
+        else: Console.writeJumpLine('\r\n No hay contactos para mostrar\r\n')
 
 
     # Busca un contacto por su nombre o número
     def seekContact(self):
         name = input('Dígite el nombre o número del contacto a buscar:\r\n')
         nameArchive, exist = self.__existContact(name)
-        print('\r\n Información del Contacto: \r\n')
-        if exist: [self.archive.showFile(name) for name in nameArchive] if len(nameArchive) > 1 else self.archive.showFile(nameArchive)
-        else: print('\r\n El contacto no se encuentra en la base de datos\r\n')
+        Console.writeJumpLine('\r\n Información del Contacto: \r\n')
+        if exist: [self.archive.showFile(name) for name in nameArchive] if len(nameArchive) > 0 and isinstance(nameArchive, list) else self.archive.showFile(nameArchive)
+        else: Console.writeJumpLine('\r\n El contacto no se encuentra en la base de datos\r\n')
 
 
     # Elimina un contacto por su nombre
@@ -101,14 +101,14 @@ class Agend:
         name = input('Dígite el nombre o el número del contacto a eliminar:\r\n')
         nameArchive, exist = self.__existContact(name)
         if exist:
-            [self.__deleteMenu(name) for name in nameArchive] if len(nameArchive) > 1 else self.__deleteMenu(nameArchive)
-            print('\r\n Contacto eliminado correctamente!\r\n')
-        else: print('\r\n El contacto a eliminar no existe\r\n')
+            [self.__deleteMenu(name) for name in nameArchive] if len(nameArchive) > 0 and isinstance(nameArchive, list) else self.__deleteMenu(nameArchive)
+            Console.writeJumpLine('\r\n Contacto eliminado correctamente!\r\n')
+        else: Console.writeJumpLine('\r\n El contacto a eliminar no existe\r\n')
 
 
     def __existContact(self, nameContact):
         nameArchive = self.__getNameContact(nameContact.strip())
-        exist = all(self.archive.existArchive(name) for name in nameArchive) if len(nameArchive) > 1 else self.archive.existArchive(nameArchive)
+        exist = all(self.archive.existArchive(name) for name in nameArchive) if len(nameArchive) > 0 and isinstance(nameArchive, list) else self.archive.existArchive(''.join(nameArchive))
         return nameArchive, exist
 
 
@@ -162,8 +162,8 @@ class Agend:
 
 
     def __deleteOptions(self):
-        print('1. Desea eliminar todo el contacto')
-        print('2. Desea eliminar un número')
+        Console.writeJumpLine('1. Desea eliminar todo el contacto')
+        Console.writeJumpLine('2. Desea eliminar un número')
 
 
     def __questionDelete(self, nameArchive, option):
@@ -193,7 +193,7 @@ class Agend:
             case "phone": contact = self.__editPhone(contact)
 
         self.__writeInArchive(nameArchive, contact)
-        print(f'\r\n Contacto editado correctamente!\r\n')
+        Console.writeJumpLine(f'\r\n Contacto editado correctamente!\r\n')
         return nameArchive
 
 
@@ -243,9 +243,9 @@ class Agend:
             if not nameProperty in ['name', 'category', 'phone']:
                 nameMessages = self.__getMessages(nameProperty)
                 method = self.__getMessages('edit' if method == 'editar' else method)
-                print(f'{nameMessages} a {method} son: ')
+                Console.writeJumpLine(f'{nameMessages} a {method} son: ')
                 for phone in contact.getPhones():
-                    print(f'{counter + 1}. {phone.getNumber() if nameProperty == "number" else phone.getTag()}')
+                    Console.writeJumpLine(f'{counter + 1}. {phone.getNumber() if nameProperty == "number" else phone.getTag()}')
                     counter += 1
             elif counter == 0:
                 break
